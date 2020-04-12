@@ -1,0 +1,26 @@
+spring:
+  activemq:
+    broker-url: vm://embedded?broker.persistent=false,useShutdownHook=false
+    in-memory: true
+    non-blocking-redelivery: true
+    packages:
+      trust-all: false
+      trusted: com.memorynotfound
+    pool:
+      block-if-full: true
+      enabled: false
+      max-connections: 1
+      use-anonymous-producers: true
+
+jms:
+  listener:
+    acknowledge mode: auto
+    auto-startup: true
+    concurrency: 1
+    max-concurrency: 1
+  pub-sub-domain: false
+  template:
+    default-destination:
+    delivery-mode: non-persistent
+    priority: 100
+    qos-enabled: true
