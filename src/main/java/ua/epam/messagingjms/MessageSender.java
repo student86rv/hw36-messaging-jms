@@ -26,28 +26,28 @@ public class MessageSender {
 
     public void sendRequest() {
         for (int i = 0; i < MESSAGES_QTY; i++) {
-            RequestMsg request = RequestFactory.getRandomRequestMsg();
-            logger.info("Message sender: {} Sending Request: {}", this, request);
-            sentMessages.put(request.getId(), request);
-            jmsTemplate.convertAndSend(REQUEST_CHANNEL, request);
+            RequestMsg requestMsg = RequestFactory.getRandomRequestMsg();
+            logger.info("Message sender: {} Sending Request: {}", this, requestMsg);
+            sentMessages.put(requestMsg.getId(), requestMsg);
+            jmsTemplate.convertAndSend(REQUEST_CHANNEL, requestMsg);
         }
     }
 
     @JmsListener(destination = RESPONSE_CHANNEL)
-    public void receiveResponse(@Payload ResponseMsg response) {
-        UUID responseId = response.getId();
+    public void receiveResponse(@Payload ResponseMsg responseMsg) {
+        UUID responseId = responseMsg.getId();
         if (sentMessages.containsKey(responseId)) {
             RequestMsg sentMsg = sentMessages.get(responseId);
             int checkSum = sentMsg.getFirstNumber() + sentMsg.getSecondNumber();
-            if (response.getSumm() == checkSum) {
-                logger.info("Message sender: {} Received correct response: {}", this, response);
+            if (responseMsg.getSumm() == checkSum) {
+                logger.info("Message sender: {} Received correct response: {}", this, responseMsg);
             } else {
-                logger.info("Message sender: {} Received invalid checksum response: {}", this, response);
-                sendToInvalid(response);
+                logger.info("Message sender: {} Received invalid checksum response: {}", this, responseMsg);
+                sendToInvalid(responseMsg);
             }
         } else {
-            logger.info("Message sender: {} Received response with invalid ID: {}", this, response);
-            sendToInvalid(response);
+            logger.info("Message sender: {} Received response with invalid ID: {}", this, responseMsg);
+            sendToInvalid(responseMsg);
         }
     }
 
